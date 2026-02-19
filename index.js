@@ -1,16 +1,24 @@
-const http = require('http');
-const server = http.createServer((req, res) => {
-  const uuid = "UUID-اختصاصی-تو"; // این را بعداً با UUID خودت عوض کن
-  const cleanIP = "104.18.15.10";
-  const host = "mori-center.b4a.run";
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 3000;
 
-  if (req.url === '/sub') {
-    let config = `vless://${uuid}@${cleanIP}:443?encryption=none&security=tls&sni=${host}&type=ws&host=${host}&path=%2f#Mori-PurVPN`;
-    res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.end(Buffer.from(config).toString('base64'));
-  } else {
-    res.writeHead(200);
-    res.end("PurVPN Center is Active!");
-  }
+// در اینجا لینک ساب‌سکرایب اصلی خودت (لینک ورکر) را بین کوتیشن قرار بده
+const MAIN_SUB_URL = "https://mori-sub.cr7-mori.workers.dev/sub";
+
+app.get('/sub/', async (req, res) => {
+    try {
+        const response = await fetch(MAIN_SUB_URL);
+        const data = await response.text();
+        res.send(data);
+    } catch (error) {
+        res.status(500).send("Error fetching subscription data");
+    }
 });
-server.listen(process.env.PORT || 3000);
+
+app.get('/', (req, res) => {
+    res.send("Mori-Center is Online.");
+});
+
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});
