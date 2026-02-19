@@ -1,22 +1,22 @@
 const express = require('express');
+const axios = require('axios'); // استفاده از کتابخانه قوی‌تر برای دریافت داده
 const app = express();
 const port = process.env.PORT || 3000;
 
-// در اینجا لینک ساب‌سکرایب اصلی خودت (لینک ورکر) را بین کوتیشن قرار بده
 const MAIN_SUB_URL = "https://mori-sub.cr7-mori.workers.dev/sub";
 
-app.get('/sub/', async (req, res) => {
+app.get('/sub', async (req, res) => {
     try {
-        const response = await fetch(MAIN_SUB_URL);
-        const data = await response.text();
-        res.send(data);
+        const response = await axios.get(MAIN_SUB_URL);
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        res.send(response.data);
     } catch (error) {
-        res.status(500).send("Error fetching subscription data");
+        res.status(500).send("خطا در ارتباط با ورکر: " + error.message);
     }
 });
 
 app.get('/', (req, res) => {
-    res.send("Mori-Center is Online.");
+    res.send("Mori-Center is Online and Ready.");
 });
 
 app.listen(port, () => {
